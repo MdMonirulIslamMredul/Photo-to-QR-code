@@ -42,7 +42,7 @@ public function index()
             // 2. Generate the QR code SVG content
             // We use 'generate' to get the raw SVG string for easy display in Blade.
             // You can customize size, color, margin, etc.
-            $qrCode = QrCode::size(200)
+            $qrCode = QrCode::size(250)
                             ->generate($photoUrl);
         }
 
@@ -53,36 +53,36 @@ public function index()
     /**
      * Handle single photo upload (from the upload page) - create or replace the "first" photo.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'photo_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'photo_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+    //     ]);
 
-        $file = $request->file('photo_file');
-        $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('uploads'), $filename);
+    //     $file = $request->file('photo_file');
+    //     $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+    //     $file->move(public_path('uploads'), $filename);
 
-        // If a photo record exists, replace it; otherwise create a new one
-        $photo = Photo::first();
-        if ($photo) {
-            // remove old file
-            $old = public_path($photo->file_path);
-            if (file_exists($old)) {
-                @unlink($old);
-            }
-            $photo->file_path = 'uploads/' . $filename;
-            $photo->original_name = $file->getClientOriginalName();
-            $photo->save();
-        } else {
-            Photo::create([
-                'file_path' => 'uploads/' . $filename,
-                'original_name' => $file->getClientOriginalName(),
-            ]);
-        }
+    //     // If a photo record exists, replace it; otherwise create a new one
+    //     $photo = Photo::first();
+    //     if ($photo) {
+    //         // remove old file
+    //         $old = public_path($photo->file_path);
+    //         if (file_exists($old)) {
+    //             @unlink($old);
+    //         }
+    //         $photo->file_path = 'uploads/' . $filename;
+    //         $photo->original_name = $file->getClientOriginalName();
+    //         $photo->save();
+    //     } else {
+    //         Photo::create([
+    //             'file_path' => 'uploads/' . $filename,
+    //             'original_name' => $file->getClientOriginalName(),
+    //         ]);
+    //     }
 
-        return redirect()->route('gallery.index')->with('success', 'Image uploaded successfully!');
-    }
+    //     return redirect()->route('gallery.index')->with('success', 'Image uploaded successfully!');
+    // }
 
     /**
      * Handle the incoming photo upload or replacement.
@@ -93,7 +93,7 @@ public function new_store(Request $request)
         // and 'required|image' for each item in the array.
         $request->validate([
             'new_photos' => 'required|array',
-            'new_photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'new_photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         // Loop through all uploaded files
@@ -127,7 +127,7 @@ public function new_store(Request $request)
     public function edit(Photo $photo)
     {
         // Show the individual photo replace form
-        $qrCode = QrCode::size(200)->generate(asset($photo->file_path));
+        $qrCode = QrCode::size(250)->generate(asset($photo->file_path));
         return view('photo.upload', compact('photo', 'qrCode'));
     }
 
@@ -138,7 +138,7 @@ public function new_store(Request $request)
     {
         // Validate incoming single file
         $request->validate([
-            'photo_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         // Delete old file if exists

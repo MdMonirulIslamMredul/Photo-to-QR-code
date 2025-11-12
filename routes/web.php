@@ -70,10 +70,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Route to show the upload form (if no photo exists) or edit form (if photo exists)
-Route::get('/photo/upload', [PhotoController::class, 'create'])->name('photo.create');
+//Route::get('/photo/upload', [PhotoController::class, 'create'])->name('photo.create');
 
 // Route to handle the photo upload/replacement logic
-Route::post('/photo', [PhotoController::class, 'store'])->name('photo.store');
+//Route::post('/photo', [PhotoController::class, 'store'])->name('photo.store');
 
 // Edit a specific photo (show individual replace form)
 Route::get('/photo/{photo}/edit', [PhotoController::class, 'edit'])->name('photo.edit');
