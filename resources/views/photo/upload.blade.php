@@ -34,7 +34,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Photo Hub</a>
+            <a class="navbar-brand" href="{{ url('/gallery') }}">Photo Management Portal</a>
 
             <div class="d-flex">
                 @auth
@@ -94,10 +94,10 @@
                 <div class="image-wrapper">
                     <h3 class="h5">Uploaded Image</h3>
                     {{-- Using Bootstrap class for image thumbnail/border --}}
-                    <img src="{{ asset('storage/' . $photo->file_path) }}"
-                         alt="{{ $photo->original_name }}"
-                         class="img-fluid border p-1"
-                         style="max-width: 300px; height: auto;">
+                <img src="{{ asset($photo->file_path) }}"
+                    alt="{{ $photo->original_name }}"
+                    class="img-fluid border p-1"
+                    style="max-width: 300px; height: auto;">
                     <p class="mt-2 text-muted">Original File Name: <strong>{{ $photo->original_name }}</strong></p>
                 </div>
 
@@ -119,8 +119,14 @@
         <h2 class="mt-4 mb-3">Photo Upload/Replacement</h2>
 
         {{-- File Upload Form --}}
-        <form action="{{ route('photo.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+        @if(isset($photo) && $photo)
+            <form action="{{ route('photo.update', $photo) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+        @else
+            <form action="{{ route('photo.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+        @endif
 
             {{-- Using Bootstrap form controls --}}
             <div class="mb-3">

@@ -75,6 +75,11 @@ Route::get('/photo/upload', [PhotoController::class, 'create'])->name('photo.cre
 // Route to handle the photo upload/replacement logic
 Route::post('/photo', [PhotoController::class, 'store'])->name('photo.store');
 
+// Edit a specific photo (show individual replace form)
+Route::get('/photo/{photo}/edit', [PhotoController::class, 'edit'])->name('photo.edit');
+// Update a specific photo (replace file)
+Route::put('/photo/{photo}', [PhotoController::class, 'update'])->name('photo.update');
+
 
 // Show the main gallery page (Add/View/Delete options)
 Route::get('/gallery', [PhotoController::class, 'index'])->name('gallery.index');

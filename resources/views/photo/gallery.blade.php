@@ -46,7 +46,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Photo Management Portal</a>
+            <a class="navbar-brand" href="{{ url('/gallery') }}">Photo Management Portal</a>
 
             <div class="d-flex">
                 @auth
@@ -147,14 +147,21 @@
 
                     <hr class="my-3">
 
-                    {{-- DELETE BUTTON FORM --}}
-                    <form action="{{ route('gallery.destroy', $photo) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?');" class="mt-3">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash me-1"></i> Delete This Image
-                        </button>
-                    </form>
+                    <div class="d-flex gap-2 mt-3">
+                        {{-- Change image (individual) --}}
+                        <a href="{{ route('photo.edit', $photo) }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Change Image
+                        </a>
+
+                        {{-- DELETE BUTTON FORM --}}
+                        <form action="{{ route('gallery.destroy', $photo) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash me-1"></i> Delete This Image
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         @endforeach
