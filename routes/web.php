@@ -67,6 +67,24 @@ Route::middleware(['auth'])->group(function () {
     // --- View Route ---
     // Show the final view of a specific licence (GET)
     Route::get('/trade_licence/{id}', [TradeLicenceController::class, 'trade_licence_view']);
+
+
+
+    //----------------Photo to QR code routes----------------//
+
+    // Edit a specific photo (show individual replace form)
+    Route::get('/photo/{photo}/edit', [PhotoController::class, 'edit'])->name('photo.edit');
+    // Update a specific photo (replace file)
+    Route::put('/photo/{photo}', [PhotoController::class, 'update'])->name('photo.update');
+
+    // Show the main gallery page (Add/View/Delete options)
+    Route::get('/gallery', [PhotoController::class, 'index'])->name('gallery.index');
+    // Handle adding NEW images (multi-upload support)
+    Route::post('/gallery', [PhotoController::class, 'new_store'])->name('gallery.new_store');
+    // Handle deleting a single image
+    Route::delete('/gallery/{photo}', [PhotoController::class, 'destroy'])->name('gallery.destroy');
+
+
 });
 
 // Route to show the upload form (if no photo exists) or edit form (if photo exists)
@@ -75,15 +93,4 @@ Route::middleware(['auth'])->group(function () {
 // Route to handle the photo upload/replacement logic
 //Route::post('/photo', [PhotoController::class, 'store'])->name('photo.store');
 
-// Edit a specific photo (show individual replace form)
-Route::get('/photo/{photo}/edit', [PhotoController::class, 'edit'])->name('photo.edit');
-// Update a specific photo (replace file)
-Route::put('/photo/{photo}', [PhotoController::class, 'update'])->name('photo.update');
 
-
-// Show the main gallery page (Add/View/Delete options)
-Route::get('/gallery', [PhotoController::class, 'index'])->name('gallery.index');
-// Handle adding NEW images (multi-upload support)
-Route::post('/gallery', [PhotoController::class, 'new_store'])->name('gallery.new_store');
-// Handle deleting a single image
-Route::delete('/gallery/{photo}', [PhotoController::class, 'destroy'])->name('gallery.destroy');
