@@ -29,8 +29,8 @@
 
         /* NEW STYLE: Increase image size */
         .gallery-image {
-            max-width: 450px; /* Significantly increased image max width */
-            max-height: 450px;
+            max-width: 500px; /* Significantly increased image max width */
+            max-height: 500px;
             object-fit: cover;
         }
 
@@ -128,9 +128,12 @@
 
                         {{-- 1. Image --}}
                         <div class="d-flex flex-column align-items-start">
-                            <img src="{{ asset($photo->file_path) }}"
-                                 alt="{{ $photo->original_name }}"
-                                 class="img-fluid border p-2 gallery-image">
+                            <a href="{{ route('photo.edit', $photo) }}" style="cursor: pointer; text-decoration: none;">
+                                <img src="{{ asset($photo->file_path) }}"
+                                     alt="{{ $photo->original_name }}"
+                                     class="img-fluid border p-2 gallery-image"
+                                     style="transition: opacity 0.2s; border-radius: 4px;">
+                            </a>
 
                             <p class="mt-2 small text-muted">File Name: <strong>{{ $photo->original_name }}</strong></p>
                         </div>
