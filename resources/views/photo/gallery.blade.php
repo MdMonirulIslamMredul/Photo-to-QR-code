@@ -108,7 +108,7 @@
         </div>
 
         {{-- EXISTING IMAGES DISPLAY (Each image takes a full row) --}}
-        <h2 class="mt-5 mb-4">Existing Photos ({{ count($photos) }})</h2>
+        <h2 class="mt-5 mb-4">All Photos ({{ count($photos) }})</h2>
 
         @if ($photos->isEmpty())
             <div class="alert alert-info">

@@ -66,10 +66,14 @@
         </div>
     </nav>
 
+
+
     {{-- Main Content Container --}}
     <div class="container my-5">
 
         <h1 class="mb-4">{{ $photo ? 'Replace Existing Photo' : 'Upload New Photo' }}</h1>
+
+
 
         {{-- Success Message --}}
         @if (session('success'))
@@ -145,6 +149,13 @@
             <button type="submit" class="btn btn-primary">
                 {{ $photo ? 'Replace Photo' : 'Upload Photo' }}
             </button>
+
+                {{-- Back to Gallery Button --}}
+
+        <a href="{{ route('gallery.index') }}" class="btn btn-warning btn-sm w-50" style="font-weight: bold; color: #000;">
+            <i class="fas fa-arrow-left me-2" style="font-size: 1.2em;"></i>Back to Gallery
+        </a>
+
         </form>
     </div>
 
