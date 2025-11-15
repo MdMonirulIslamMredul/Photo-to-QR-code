@@ -13,6 +13,7 @@ class Photo extends Model
     protected $fillable = [
         'file_path',
         'original_name',
+        'qr_url',
     ];
 
 }

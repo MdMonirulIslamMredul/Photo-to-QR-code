@@ -18,8 +18,8 @@ Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 
-Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [UserController::class, 'register']);
+// Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
+// Route::post('/register', [UserController::class, 'register']);
 
 
 //for Create new trade liecnce
@@ -48,25 +48,14 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    // --- Creation Routes ---
-    // Show the new registration form (GET)
-    Route::get('/trade_licence_resigter', [TradeLicenceController::class, 'new_trade_licence_resigter']);
-    // Handle form submission and creation (POST)
-    Route::post('/trade_licence_resigter', [TradeLicenceController::class, 'store']);
 
-    // --- Update/Edit Routes ---
-    // Show the edit form (GET)
-    Route::get('/edit_trade_licence/{id}', [TradeLicenceController::class, 'edit_trade_licence']);
-    // Handle form submission and update (PUT)
-    Route::put('/edit_trade_licence/{id}', [TradeLicenceController::class, 'update']);
-
-    // --- Delete Route ---
-    // Handle deletion (DELETE)
-    Route::delete('/trade_licence/{id}', [TradeLicenceController::class, 'destroy']);
-
-    // --- View Route ---
-    // Show the final view of a specific licence (GET)
-    Route::get('/trade_licence/{id}', [TradeLicenceController::class, 'trade_licence_view']);
+    //---------------Trade Licence routes-----------------//
+    // Route::get('/trade_licence_resigter', [TradeLicenceController::class, 'new_trade_licence_resigter']);
+    // Route::post('/trade_licence_resigter', [TradeLicenceController::class, 'store']);
+    // Route::get('/edit_trade_licence/{id}', [TradeLicenceController::class, 'edit_trade_licence']);
+    // Route::put('/edit_trade_licence/{id}', [TradeLicenceController::class, 'update']);
+    // Route::delete('/trade_licence/{id}', [TradeLicenceController::class, 'destroy']);
+    // Route::get('/trade_licence/{email}', [TradeLicenceController::class, 'trade_licence_view']);
 
 
 
@@ -79,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Show the main gallery page (Add/View/Delete options)
     Route::get('/gallery', [PhotoController::class, 'index'])->name('gallery.index');
+    Route::get('/gallery', [PhotoController::class, 'index'])->name('gallery.index');
     // Handle adding NEW images (multi-upload support)
     Route::post('/gallery', [PhotoController::class, 'new_store'])->name('gallery.new_store');
     // Handle deleting a single image
@@ -87,10 +77,23 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+// Route to print dakhila by qr code for specific qr_url no need login
+Route::get('/dakhila-print/{qr_url}', [PhotoController::class, 'printByQr'])->name('dakhila.print_qr');
+
+
+
+
+
 // Route to show the upload form (if no photo exists) or edit form (if photo exists)
 //Route::get('/photo/upload', [PhotoController::class, 'create'])->name('photo.create');
 
 // Route to handle the photo upload/replacement logic
 //Route::post('/photo', [PhotoController::class, 'store'])->name('photo.store');
+
+// Route::get('/dakhila-print', function () {
+//     return view('dakhila-print/dakil');
+// })->name('dakhila.print');
+
+
 
 

@@ -183,11 +183,9 @@ $licence->update($validatedData);
     }
 
 
-    public function trade_licence_view($id){
-
-         $licence = TradeLicence::findOrFail($id);
+    public function trade_licence_view($email){
+        $licence = TradeLicence::where('email', $email)->firstOrFail();
         return view('/trade_licence',compact('licence'));
-
     }
 
 

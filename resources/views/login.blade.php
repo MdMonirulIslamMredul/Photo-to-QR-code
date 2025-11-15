@@ -54,12 +54,12 @@
 
             <hr class="my-4">
 
-            <div class="text-center">
+            {{-- <div class="text-center">
                 <p class="mb-2">Don't have an account?</p>
                 <a href="/register" class="btn btn-outline-success w-75">
                     Register Now
                 </a>
-            </div>
+            </div> --}}
 
         </div>
     </div>

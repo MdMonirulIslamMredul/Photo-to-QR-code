@@ -93,14 +93,14 @@
         {{-- NEW IMAGE UPLOAD FORM --}}
         <div class="card mb-5 shadow-sm">
             <div class="card-header bg-light">
-                <h5 class="mb-0">Add New Images</h5>
+                <h5 class="mb-0">Add New Image to Make new QR code</h5>
             </div>
             <div class="card-body">
                 <form action="{{ route('gallery.new_store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
                         <label for="new_photos" class="form-label">Choose Multiple Photos:</label>
-                        <input type="file" name="new_photos[]" id="new_photos" class="form-control" multiple required>
+                        <input type="file" name="new_photos[]" id="new_photos" class="form-control" multiple >
                     </div>
                     <button type="submit" class="btn btn-success">Upload New Images</button>
                 </form>
@@ -116,58 +116,87 @@
             </div>
         @endif
 
-        {{-- Loop through photos, each card takes a full row (d-block) --}}
-        @foreach ($photos as $photo)
-            <div class="card shadow-sm mb-4">
-                <div class="card-body p-4">
 
-                    <h5 class="card-title mb-3">Photo: {{ $photo->original_name }}</h5>
 
-                    {{-- NEW: Container for Image and QR code on one line --}}
-                    <div class="image-qr-row">
+        {{-- Loop through photos --}}
+@foreach ($photos as $photo)
+    @php
+        // Get the file extension and convert to lowercase
+        $extension = strtolower(pathinfo($photo->file_path, PATHINFO_EXTENSION));
+        // Check if it's a PDF
+        $is_pdf = $extension === 'pdf';
+    @endphp
 
-                        {{-- 1. Image --}}
-                        <div class="d-flex flex-column align-items-start">
-                            <a href="{{ route('photo.edit', $photo) }}" style="cursor: pointer; text-decoration: none;">
-                                <img src="{{ asset($photo->file_path) }}"
-                                     alt="{{ $photo->original_name }}"
-                                     class="img-fluid border p-2 gallery-image"
-                                     style="transition: opacity 0.2s; border-radius: 4px;">
-                            </a>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
 
-                            <p class="mt-2 small text-muted">File Name: <strong>{{ $photo->original_name }}</strong></p>
-                        </div>
+            <h5 class="card-title mb-3">Photo: {{ $photo->qr_url }}</h5>
 
-                        {{-- 2. QR Code --}}
-                        @if (isset($qrCodes[$photo->id]))
-                            <div class="qr-code-wrapper p-3">
-                                <p class="small fw-bold mb-2">QR Link</p>
-                                {!! $qrCodes[$photo->id] !!}
-                                <p class="text-center text-muted mt-2 small">Scan to view</p>
+            <div class="image-qr-row">
+
+                {{-- 1. Image/PDF Preview --}}
+                <div class="d-flex flex-column align-items-start">
+                    <a href="{{ route('photo.edit', $photo) }}" style="cursor: pointer; text-decoration: none;">
+
+                        {{-- CONDITIONAL RENDERING: IMAGE vs. PDF PREVIEW --}}
+                        @if ($is_pdf)
+                            {{-- PDF EMBED PREVIEW --}}
+                            <div class="border p-2 bg-light gallery-image"
+                                 style="width: 500px; height: 500px; overflow: hidden; border-radius: 4px;">
+
+                                {{-- Iframe loads the PDF file directly --}}
+                                <iframe src="{{ asset($photo->file_path) }}"
+                                        style="width: 100%; height: 100%; border: none;">
+                                    {{-- Fallback content for browsers that don't support iframes/PDF embedding --}}
+                                    <p class="text-center text-danger mt-3">Your browser does not support embedded PDF files.
+                                        <a href="{{ asset($photo->file_path) }}" target="_blank">Click here to download/view the PDF.</a>
+                                    </p>
+                                </iframe>
                             </div>
+                        @else
+                            {{-- IMAGE VIEW (Unchanged) --}}
+                            <img src="{{ asset($photo->file_path) }}"
+                                alt="{{ $photo->original_name }}"
+                                class="img-fluid border p-2 gallery-image"
+                                style="transition: opacity 0.2s; border-radius: 4px;">
                         @endif
-                    </div>
 
-                    <hr class="my-3">
-
-                    <div class="d-flex gap-2 mt-3">
-                        {{-- Change image (individual) --}}
-                        <a href="{{ route('photo.edit', $photo) }}" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-edit me-1"></i> Change Image
-                        </a>
-
-                        {{-- DELETE BUTTON FORM --}}
-                        <form action="{{ route('gallery.destroy', $photo) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash me-1"></i> Delete This Image
-                            </button>
-                        </form>
-                    </div>
+                    </a>
+                    <p class="mt-2 small text-muted">File Name: <strong>{{ $photo->original_name }}</strong></p>
                 </div>
+
+                {{-- 2. QR Code (rest of the code is unchanged) --}}
+                @if (isset($qrCodes[$photo->id]))
+                    <div class="qr-code-wrapper p-3">
+                        <p class="small fw-bold mb-2">QR Link</p>
+                        {!! $qrCodes[$photo->id] !!}
+                        <p class="text-center text-muted mt-2 small">Scan to view</p>
+                    </div>
+                @endif
             </div>
-        @endforeach
+
+            <hr class="my-3">
+
+            {{-- Action buttons (unchanged) --}}
+            <div class="d-flex gap-2 mt-3">
+                <a href="{{ route('photo.edit', $photo) }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-edit me-1"></i> Change Image
+                </a>
+
+                <form action="{{ route('gallery.destroy', $photo) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash me-1"></i> Delete This Image
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
+
+
+
     </div>
 
     {{-- Bootstrap JS Bundle --}}

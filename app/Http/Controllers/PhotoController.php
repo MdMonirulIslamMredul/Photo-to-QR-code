@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Photo;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -19,8 +20,9 @@ public function index()
         $qrCodes = [];
 
         foreach ($photos as $photo) {
-            $photoUrl = asset($photo->file_path);
-
+            //$photoUrl = asset($photo->qr_url);
+            // Assuming the route is named 'dakhila.print_qr'
+         $photoUrl = 'http://photo_to_qr_code.test/dakhila-print/'.$photo->qr_url;
             // Generate a QR code for each photo's URL
             $qrCodes[$photo->id] = QrCode::size(250)->generate($photoUrl);
         }
@@ -89,12 +91,13 @@ public function index()
      */
 public function new_store(Request $request)
     {
-        // Note the validation rule uses 'nullable|array' for the container
-        // and 'required|image' for each item in the array.
-        $request->validate([
-            'new_photos' => 'required|array',
-            'new_photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-        ]);
+
+$request->validate([
+    'new_photos' => 'required|array',
+    // 1. Remove 'image' rule as it conflicts with PDF.
+    // 2. Add 'pdf' to the list of allowed mimes.
+    'new_photos.*' => 'mimes:jpeg,png,jpg,gif,svg,webp,pdf|max:2048',
+]);
 
         // Loop through all uploaded files
         foreach ($request->file('new_photos') as $file) {
@@ -103,10 +106,13 @@ public function new_store(Request $request)
             // Store directly in public/uploads folder
             $file->move(public_path('uploads'), $filename);
 
+                $randomQr = Str::random(30) . '09';
+
             // Create a new database record for each file
             Photo::create([
                 'file_path' => 'uploads/' . $filename,
                 'original_name' => $file->getClientOriginalName(),
+                'qr_url' => $randomQr,
             ]);
         }
 
@@ -138,7 +144,7 @@ public function new_store(Request $request)
     {
         // Validate incoming single file
         $request->validate([
-            'photo_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'photo_file' => 'required|mimes:jpeg,png,jpg,gif,svg,webp,pdf|max:2048',
         ]);
 
         // Delete old file if exists
@@ -157,7 +163,10 @@ public function new_store(Request $request)
         $photo->original_name = $file->getClientOriginalName();
         $photo->save();
 
-        return redirect()->route('gallery.index')->with('success', 'Image replaced successfully!');
+
+        return view('photo.upload', compact('photo'));
+
+       // return redirect()->route('upload')->with('success', 'Image replaced successfully!');
     }
 
     /**
@@ -175,5 +184,17 @@ public function new_store(Request $request)
         $photo->delete();
 
         return redirect()->route('gallery.index')->with('success', 'Image deleted successfully!');
+    }
+
+
+        public function printByQr($qr_url)
+    {
+        // 1. Find the Dakhila record using the 'qr_url' column.
+        // If not found, abort with a 404 error.
+        $dakhila = Photo::where('qr_url', $qr_url)->first();
+
+        // 2. Return the view located at 'dakhila-print/print.blade.php'
+        // and pass the $dakhila object to the view.
+        return view('dakhila-print.print', compact('dakhila'));
     }
 }
